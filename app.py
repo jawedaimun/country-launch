@@ -443,6 +443,9 @@ div[data-testid="stMarkdownContainer"]:has(p:only-child) {
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown(f'<p class="result-text">{generated_text}</p>', unsafe_allow_html=True)
+
+
 thresholds = load_thresholds()
 
 st.title("Country Launch Scoring")
