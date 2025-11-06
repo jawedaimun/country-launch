@@ -402,6 +402,32 @@ st.markdown('''
 </style>
 ''', unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+    div[data-baseweb="select"] > div {
+        background-color: white !important;
+        color: black !important;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        font-weight: 400 !important;
+    }
+    div[data-baseweb="select"] div {
+        color: black !important;
+    }
+    div[data-baseweb="select"] span {
+        color: black !important;
+    }
+    ul[role="listbox"] {
+        background-color: white !important;
+        color: black !important;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    }
+    section[data-testid="stSidebar"] * {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        color: black !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 thresholds = load_thresholds()
 
 st.title("Country Launch Scoring")
