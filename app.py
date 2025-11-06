@@ -9,7 +9,7 @@ with open("thresholds.json") as f:
     
 DEFAULT_SELECT = ["Very weak","Weak","Moderate","Strong","Excellent"]
 
-# Pre-populated country data extracted from your CSVs
+# Pre-populated country data extracted the CSVs
 COUNTRY_DATA = {
     "Singapore": {
         "GDP per capita": 72794.0,
