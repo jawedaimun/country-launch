@@ -51,7 +51,8 @@
             "Several well-known players",
             "Crowded market"
           ],
-          "reason": "Scarcity implies first-mover advantages; crowding raises CAC."
+          "reverse_options": true,
+          "reason": "Less competition (None/Sparse) = higher score due to first-mover advantage; more competition = lower score."
         },
         "Conventional robo penetration": {
           "label": "Conventional robo penetration (AUM per capita, US$)",
