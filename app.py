@@ -430,9 +430,14 @@ st.markdown("""
 
 st.markdown("""
 <style>
-/* Fix result text visibility */
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stMarkdownContainer"] span {
+/* Only affect result or output text area */
+div[data-testid="stMarkdownContainer"] p.result-text,
+div[data-testid="stMarkdownContainer"] span.result-text {
+    color: black !important;
+}
+
+/* General fallback for text below buttons */
+div[data-testid="stMarkdownContainer"]:has(p:only-child) {
     color: black !important;
 }
 </style>
