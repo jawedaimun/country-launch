@@ -9,7 +9,7 @@ with open("thresholds.json") as f:
     
 DEFAULT_SELECT = ["Very weak","Weak","Moderate","Strong","Excellent"]
 
-# Pre-populated country data extracted from the CSVs
+# Pre-populated country data extracted from your CSVs
 COUNTRY_DATA = {
     "Singapore": {
         "GDP per capita": 72794.0,
@@ -205,7 +205,7 @@ def narrative(country, category_scores, overall):
     lines += [f"- {c}: {v:.2f}" for c, v in bot3]
     return "\n".join(lines)
 
-# Modern, clean styling inspired by Claude's aesthetic
+# Clean, professional styling with proper contrast
 st.markdown('''
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
@@ -214,18 +214,20 @@ st.markdown('''
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
+    /* Main content area */
     .main {
         background-color: #ffffff;
         padding: 2rem;
     }
     
     .stApp {
-        background-color: #fafafa;
+        background-color: #f8f9fa;
     }
     
+    /* Headings - ensure dark text on light background */
     h1 {
         font-weight: 600;
-        color: #1a1a1a;
+        color: #1a1a1a !important;
         font-size: 2rem;
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
@@ -233,116 +235,131 @@ st.markdown('''
     
     h2, h3 {
         font-weight: 500;
-        color: #2d2d2d;
+        color: #1a1a1a !important;
         margin-top: 2rem;
         margin-bottom: 1rem;
         letter-spacing: -0.01em;
     }
     
-    .stSelectbox, .stNumberInput {
-        margin-bottom: 0.5rem;
+    /* Labels - dark gray for readability */
+    .stSelectbox label, .stNumberInput label {
+        font-weight: 500 !important;
+        color: #1a1a1a !important;
+        font-size: 0.9rem !important;
     }
     
-    .stSelectbox > label, .stNumberInput > label {
-        font-weight: 500;
-        color: #4a4a4a;
-        font-size: 0.9rem;
-    }
-    
+    /* Input fields */
     div[data-baseweb="select"] > div {
         border-radius: 8px;
-        border: 1px solid #e5e5e5;
-        background-color: #ffffff;
-        transition: all 0.2s;
+        border: 1px solid #d1d5db;
+        background-color: #ffffff !important;
     }
     
     div[data-baseweb="select"] > div:hover {
-        border-color: #d4d4d4;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        border-color: #9ca3af;
     }
     
     .stNumberInput input {
         border-radius: 8px;
-        border: 1px solid #e5e5e5;
-        background-color: #ffffff;
-        font-weight: 400;
-        transition: all 0.2s;
+        border: 1px solid #d1d5db;
+        background-color: #ffffff !important;
+        color: #1a1a1a !important;
     }
     
     .stNumberInput input:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
     
+    /* Buttons */
     .stButton > button {
         border-radius: 8px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white !important;
         border: none;
         padding: 0.6rem 1.5rem;
         font-weight: 500;
         font-size: 0.95rem;
         transition: all 0.2s;
-        box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
     }
     
     .stButton > button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     
-    .stButton > button:active {
-        transform: translateY(0);
-    }
-    
-    p[data-testid="stMarkdownContainer"] {
-        color: #6b7280;
+    /* Caption text - medium gray for subtle info */
+    .stMarkdown p, p[data-testid="stMarkdownContainer"] {
+        color: #6b7280 !important;
         font-size: 0.875rem;
         line-height: 1.5;
     }
     
-    .stDataFrame {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    /* Bold text in markdown */
+    .stMarkdown strong {
+        color: #1a1a1a !important;
     }
     
+    /* Info boxes */
+    .stAlert {
+        border-radius: 8px;
+    }
+    
+    /* Data tables */
+    .stDataFrame {
+        border-radius: 8px;
+    }
+    
+    /* Divider */
     hr {
         border: none;
-        border-top: 1px solid #e5e5e5;
+        border-top: 1px solid #e5e7eb;
         margin: 2rem 0;
     }
     
-    div[data-testid="stMarkdownContainer"] > p > strong {
-        color: #1a1a1a;
-    }
-    
+    /* Download buttons */
     .stDownloadButton > button {
         border-radius: 8px;
         background-color: #ffffff;
-        color: #4a4a4a;
-        border: 1px solid #e5e5e5;
+        color: #1a1a1a !important;
+        border: 1px solid #d1d5db;
         padding: 0.5rem 1.2rem;
         font-weight: 500;
         font-size: 0.9rem;
-        transition: all 0.2s;
     }
     
     .stDownloadButton > button:hover {
-        border-color: #d4d4d4;
-        background-color: #fafafa;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        border-color: #9ca3af;
+        background-color: #f9fafb;
     }
     
-    div[data-testid="stSidebar"] {
-        background-color: #fafafa;
-        border-right: 1px solid #e5e5e5;
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background-color: #f8f9fa;
+        border-right: 1px solid #e5e7eb;
     }
     
-    div[data-testid="stSidebar"] h2 {
+    [data-testid="stSidebar"] h2 {
         font-size: 1rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: #1a1a1a !important;
+    }
+    
+    [data-testid="stSidebar"] p {
+        color: #4b5563 !important;
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown {
+        color: #4b5563 !important;
+    }
+    
+    /* Metric widget */
+    [data-testid="stMetricValue"] {
+        color: #1a1a1a !important;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: #6b7280 !important;
     }
 </style>
 ''', unsafe_allow_html=True)
@@ -350,7 +367,7 @@ st.markdown('''
 thresholds = load_thresholds()
 
 st.title("Country Launch Scoring")
-st.markdown("*Assess market readiness for Shariah/Ethical robo-advisory services*")
+st.markdown("<p style='color: #6b7280; font-size: 1rem; margin-top: -0.5rem;'>Assess market readiness for Shariah/Ethical robo-advisory services</p>", unsafe_allow_html=True)
 st.markdown("")
 
 # Country selection dropdown
@@ -363,7 +380,7 @@ with col1:
         help="Select a pre-populated country or choose 'Custom' to enter manually"
     )
 
-# Get pre-populated data
+# Get pre-populated data - THIS WAS THE BUG!
 if country in COUNTRY_DATA:
     selected_data = COUNTRY_DATA[country]
 else:
