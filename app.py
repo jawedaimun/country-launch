@@ -428,19 +428,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-/* Make all generated text (below buttons) black */
-div[data-testid="stMarkdownContainer"] {
-    color: black !important;
-}
-
-/* Restore white text on buttons */
-div.stButton > button {
-    color: white !important;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 thresholds = load_thresholds()
