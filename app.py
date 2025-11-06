@@ -193,11 +193,11 @@ def readiness_label(score):
     elif score >= 3.0: return "Conditional (Needs fixes)", "#f59e0b"
     else: return "High risk (Major issues)", "#ef4444"
 
-def narrative(st.session_state.selected_country, category_scores, overall):
+def narrative(selected_country, category_scores, overall):
     sorted_cats = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
     top3, bot3 = sorted_cats[:3], sorted_cats[-3:]
     label, _ = readiness_label(overall)
-    lines = [f"**Market Assessment: {country}**", "", f"Launch Readiness: {overall:.2f}/5 → **{label}**", ""]
+    lines = [f"**Market Assessment: {selected_country}**", "", f"Launch Readiness: {overall:.2f}/5 → **{label}**", ""]
     lines.append("**Top-scoring categories:**")
     lines += [f"- {c}: {v:.2f}" for c, v in top3]
     lines.append("")
@@ -617,7 +617,7 @@ if 'csv_results' in st.session_state:
     st.markdown("### Overall Score")
     st.metric("Final Score", f"{csv['overall']:.3f} / 5", f"{csv['overall']/5*100:.1f}%")
 
-    safe_country_name = country.replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "")
+    safe_country_name = current_country.replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "")
     
     col1, col2 = st.columns(2)
     with col1:
