@@ -9,8 +9,32 @@ with open("thresholds.json") as f:
     
 DEFAULT_SELECT = ["Very weak","Weak","Moderate","Strong","Excellent"]
 
-# Pre-populated country data extracted from your CSVs
+# Pre-populated country data extracted from the CSVs
 COUNTRY_DATA = {
+    "Singapore": {
+        "GDP per capita": 72794.0,
+        "Gini coefficient": 0.37,
+        "Disposable income": 3500.0,
+        "Retail investor penetration": 28.0,
+        "Islamic robo competitors": "Moderate competition",
+        "Conventional robo penetration": 2500.0,
+        "Digital maturity": "Excellent",
+        "Shariah-compliant instruments": "Strong range (21–50)",
+        "Sukuk & mutual funds": "Strong",
+        "Real estate crowdfunding": "Moderate",
+        "Ethical commodities": "Excellent",
+        "Clarity for Islamic Finance": "Weak",
+        "Licensing process": "Weak",
+        "Regulatory stability": "Excellent",
+        "KYC providers": "Excellent",
+        "Physical setup cost": "Low",
+        "Brokers & custodians": "Weak",
+        "Talent pool": 0.85,
+        "Ethical investing culture": "Weak",
+        "Shariah finance attitudes": "Excellent",
+        "Attitude towards Muslims": "Mixed/neutral",
+        "Digital adoption": "Mixed"
+    },
     "India": {
         "GDP per capita": 2600.0,
         "Gini coefficient": 0.25,
@@ -19,7 +43,7 @@ COUNTRY_DATA = {
         "Islamic robo competitors": "None present",
         "Conventional robo penetration": 16.0,
         "Digital maturity": "Excellent",
-        "Shariah-compliant instruments": "Extensive opportunities (50+)",
+        "Shariah-compliant instruments": "None available",
         "Sukuk & mutual funds": "Very weak",
         "Real estate crowdfunding": "Moderate",
         "Ethical commodities": "Moderate",
@@ -34,6 +58,30 @@ COUNTRY_DATA = {
         "Shariah finance attitudes": "Very weak",
         "Attitude towards Muslims": "Very negative",
         "Digital adoption": "Mixed"
+    },
+    "France": {
+        "GDP per capita": 39117.0,
+        "Gini coefficient": 0.3,
+        "Disposable income": 3000.0,
+        "Retail investor penetration": 24.0,
+        "Islamic robo competitors": "None present",
+        "Conventional robo penetration": 4200.0,
+        "Digital maturity": "Excellent",
+        "Shariah-compliant instruments": "Extensive opportunities (50+)",
+        "Sukuk & mutual funds": "Excellent",
+        "Real estate crowdfunding": "Excellent",
+        "Ethical commodities": "Excellent",
+        "Clarity for Islamic Finance": "Moderate",
+        "Licensing process": "Strong",
+        "Regulatory stability": "Excellent",
+        "KYC providers": "Excellent",
+        "Physical setup cost": "Very high",
+        "Brokers & custodians": "Weak",
+        "Talent pool": 0.5,
+        "Ethical investing culture": "Strong",
+        "Shariah finance attitudes": "Weak",
+        "Attitude towards Muslims": "Negative",
+        "Digital adoption": "Digital-leaning"
     },
     "Netherlands": {
         "GDP per capita": 52000.0,
@@ -89,7 +137,7 @@ COUNTRY_DATA = {
         "Disposable income": 1200.0,
         "Retail investor penetration": 2.0,
         "Islamic robo competitors": "None present",
-        "Conventional robo penetration": 0.0,
+        "Conventional robo penetration": 10.0,
         "Digital maturity": "Moderate",
         "Shariah-compliant instruments": "Extensive opportunities (50+)",
         "Sukuk & mutual funds": "Moderate",
@@ -107,7 +155,7 @@ COUNTRY_DATA = {
         "Attitude towards Muslims": "Very positive",
         "Digital adoption": "Branch-leaning"
     },
-    "Custom (Manual Entry)": {}  # Empty for manual entry
+    "Custom (Manual Entry)": {}
 }
 
 @st.cache_data
@@ -129,69 +177,210 @@ def score_numeric(value, breaks, scores, direction):
             if value <= b:
                 return s, f"{value} ≤ {b} → {s}"
         return scores[-1], f"{value} > {breaks[-1]} → {scores[-1]}"
-    else:  # higher_worse
-        for b, s in zip(breaks, scores):
-            if value <= b:
-                return s, f"{value} ≤ {b} → {s}"
-        return scores[-1], f"{value} > {breaks[-1]} → {scores[-1]}"
 
 def score_select(val, custom_options, reverse=False):
     options = custom_options or DEFAULT_SELECT
     try:
         idx = options.index(val)
     except ValueError:
-        idx = 2  # Moderate/Neutral default
+        idx = 2
     score = (5 - idx) if reverse else (idx + 1)
     return score, f"{val} → {score}"
 
 def readiness_label(score):
-    if score >= 4.5: return "Launch-ready (Excellent)", "green"
-    elif score >= 3.8: return "Strong candidate (Good)", "blue"
-    elif score >= 3.0: return "Conditional (Needs fixes)", "orange"
-    else: return "High risk (Major issues)", "red"
+    if score >= 4.5: return "Launch-ready (Excellent)", "#10b981"
+    elif score >= 3.8: return "Strong candidate (Good)", "#3b82f6"
+    elif score >= 3.0: return "Conditional (Needs fixes)", "#f59e0b"
+    else: return "High risk (Major issues)", "#ef4444"
 
 def narrative(country, category_scores, overall):
     sorted_cats = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
     top3, bot3 = sorted_cats[:3], sorted_cats[-3:]
     label, _ = readiness_label(overall)
     lines = [f"**Market Assessment: {country}**", "", f"Launch Readiness: {overall:.2f}/5 → **{label}**", ""]
-    lines.append("Top-scoring categories:")
+    lines.append("**Top-scoring categories:**")
     lines += [f"- {c}: {v:.2f}" for c, v in top3]
     lines.append("")
-    lines.append("Lowest-scoring categories:")
+    lines.append("**Lowest-scoring categories:**")
     lines += [f"- {c}: {v:.2f}" for c, v in bot3]
     return "\n".join(lines)
 
-# Styling
+# Modern, clean styling inspired by Claude's aesthetic
 st.markdown('''
 <style>
-body { background: white; color: #333; }
-div[data-baseweb="input"] input, .stNumberInput input { max-width: 280px; border-radius: 10px; }
-div[role="combobox"] { max-width: 320px; }
-.stButton>button { border-radius: 10px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .main {
+        background-color: #ffffff;
+        padding: 2rem;
+    }
+    
+    .stApp {
+        background-color: #fafafa;
+    }
+    
+    h1 {
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+    
+    h2, h3 {
+        font-weight: 500;
+        color: #2d2d2d;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        letter-spacing: -0.01em;
+    }
+    
+    .stSelectbox, .stNumberInput {
+        margin-bottom: 0.5rem;
+    }
+    
+    .stSelectbox > label, .stNumberInput > label {
+        font-weight: 500;
+        color: #4a4a4a;
+        font-size: 0.9rem;
+    }
+    
+    div[data-baseweb="select"] > div {
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
+        background-color: #ffffff;
+        transition: all 0.2s;
+    }
+    
+    div[data-baseweb="select"] > div:hover {
+        border-color: #d4d4d4;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    .stNumberInput input {
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
+        background-color: #ffffff;
+        font-weight: 400;
+        transition: all 0.2s;
+    }
+    
+    .stNumberInput input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .stButton > button {
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0);
+    }
+    
+    p[data-testid="stMarkdownContainer"] {
+        color: #6b7280;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+    
+    .stDataFrame {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    hr {
+        border: none;
+        border-top: 1px solid #e5e5e5;
+        margin: 2rem 0;
+    }
+    
+    div[data-testid="stMarkdownContainer"] > p > strong {
+        color: #1a1a1a;
+    }
+    
+    .stDownloadButton > button {
+        border-radius: 8px;
+        background-color: #ffffff;
+        color: #4a4a4a;
+        border: 1px solid #e5e5e5;
+        padding: 0.5rem 1.2rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    
+    .stDownloadButton > button:hover {
+        border-color: #d4d4d4;
+        background-color: #fafafa;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    div[data-testid="stSidebar"] {
+        background-color: #fafafa;
+        border-right: 1px solid #e5e5e5;
+    }
+    
+    div[data-testid="stSidebar"] h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
 </style>
 ''', unsafe_allow_html=True)
 
 thresholds = load_thresholds()
-st.title("Shariah/Ethical Robo Advisory Country Launch Scoring")
+
+st.title("Country Launch Scoring")
+st.markdown("*Assess market readiness for Shariah/Ethical robo-advisory services*")
+st.markdown("")
 
 # Country selection dropdown
-country = st.selectbox(
-    "Select Jurisdiction",
-    options=list(COUNTRY_DATA.keys()),
-    index=0,
-    help="Select a pre-populated country or choose 'Custom' to enter manually"
-)
+col1, col2 = st.columns([2, 3])
+with col1:
+    country = st.selectbox(
+        "Select Jurisdiction",
+        options=list(COUNTRY_DATA.keys()),
+        index=0,
+        help="Select a pre-populated country or choose 'Custom' to enter manually"
+    )
 
-# Get pre-populated data or empty dict
-selected_data = COUNTRY_DATA.get(country, {})
+# Get pre-populated data
+if country in COUNTRY_DATA:
+    selected_data = COUNTRY_DATA[country]
+else:
+    selected_data = {}
 
-st.sidebar.header("Weights overview")
+st.sidebar.header("Category Weights")
+st.sidebar.markdown("*Total should equal 1.00*")
 total_cat_weight = sum(cat_cfg["weight"] for cat_cfg in thresholds["categories"].values())
-st.sidebar.write(f"Total category weights = {total_cat_weight:.2f} (should be 1.00)")
+st.sidebar.metric("Total Weight", f"{total_cat_weight:.2f}")
+st.sidebar.markdown("---")
+for cat_name, cat_cfg in thresholds["categories"].items():
+    st.sidebar.markdown(f"**{cat_name}**: {cat_cfg['weight']:.2f}")
 
 if selected_data and country != "Custom (Manual Entry)":
-    st.info(f"✅ Pre-populated data loaded for {country}. You can modify any field below.")
+    st.info(f"✓ Pre-populated data loaded for **{country}**. You can modify any field below.")
+
+st.markdown("---")
 
 cat_scores, cat_breakdown = {}, {}
 
@@ -207,8 +396,8 @@ for cat, cdef in RUBRIC.items():
             options = mdef.get("options", DEFAULT_SELECT)
             reverse = mdef.get("reverse_options", False)
             
-            # Get pre-populated value or default to first option
-            default_val = selected_data.get(mkey, options[2])  # Default to middle option
+            # Get pre-populated value or default to middle option
+            default_val = selected_data.get(mkey, options[2])
             if default_val not in options:
                 default_val = options[2]
             default_idx = options.index(default_val)
@@ -223,18 +412,26 @@ for cat, cdef in RUBRIC.items():
             score, why = score_numeric(val, mdef["breaks"], mdef["scores"], mdef["direction"])
             raw = val
             
-        st.caption(f"{mdef['reason']} → Score {score} ({why}); weight {weight:.2f}")
+        st.caption(f"_{mdef['reason']}_ → Score: **{score}** ({why}) • Weight: {weight:.2f}")
         total += score * weight
         metrics[mkey] = {"label": label, "input": raw, "score": score, "weight": weight, "reason": mdef["reason"]}
     
     cat_scores[cat] = round(total, 3)
     cat_breakdown[cat] = {"weight": cdef["weight"], "score": round(total, 3), "metrics": metrics}
+    st.markdown("")
 
-if st.button("Compute Launch Readiness"):
+st.markdown("---")
+
+col1, col2, col3 = st.columns([1, 1, 2])
+with col1:
+    compute_readiness = st.button("Compute Launch Readiness", use_container_width=True)
+with col2:
+    compute_csv = st.button("Generate CSV Reports", use_container_width=True)
+
+if compute_readiness:
     overall = sum([cat_scores[c] * RUBRIC[c]["weight"] for c in RUBRIC.keys()])
     label, color = readiness_label(overall)
     
-    # Store in session state
     st.session_state['launch_readiness'] = {
         'overall': overall,
         'label': label,
@@ -242,15 +439,23 @@ if st.button("Compute Launch Readiness"):
         'narrative': narrative(country, cat_scores, overall)
     }
 
-# Display if exists in session state
 if 'launch_readiness' in st.session_state:
     lr = st.session_state['launch_readiness']
-    st.markdown(f"<p style='color:{lr['color']};font-size:20px'><b>Launch Readiness: {lr['overall']:.2f}/5 → {lr['label']}</b></p>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, {lr['color']}15 0%, {lr['color']}05 100%); 
+                padding: 1.5rem; border-radius: 12px; border-left: 4px solid {lr['color']};
+                margin: 1.5rem 0;'>
+        <h2 style='color: {lr['color']}; margin: 0 0 0.5rem 0; font-size: 1.5rem;'>
+            Launch Readiness: {lr['overall']:.2f}/5
+        </h2>
+        <p style='color: #4a4a4a; margin: 0; font-size: 1.1rem; font-weight: 500;'>
+            {lr['label']}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown(lr['narrative'])
 
-st.markdown("---")
-
-if st.button("Compute score & Export CSVs"):
+if compute_csv:
     rows = []
     category_rows = []
     overall = 0.0
@@ -294,38 +499,40 @@ if st.button("Compute score & Export CSVs"):
         })
         overall += cat_avg_weighted * cat_weight
 
-    # Store in session state
     st.session_state['csv_results'] = {
         'rows': rows,
         'category_rows': category_rows,
         'overall': overall
     }
 
-# Display if exists in session state
 if 'csv_results' in st.session_state:
     csv = st.session_state['csv_results']
     
-    st.subheader("Metric-level results")
-    st.dataframe(pd.DataFrame(csv['rows']))
+    st.markdown("### Metric-level Results")
+    st.dataframe(pd.DataFrame(csv['rows']), use_container_width=True)
 
-    st.subheader("Category-level results")
-    st.dataframe(pd.DataFrame(csv['category_rows']))
+    st.markdown("### Category-level Results")
+    st.dataframe(pd.DataFrame(csv['category_rows']), use_container_width=True)
 
-    st.subheader("Overall score")
-    st.write(f"**{csv['overall']:.3f} / 5**  (equivalently **{csv['overall']/5*100:.1f}%**)")
+    st.markdown("### Overall Score")
+    st.metric("Final Score", f"{csv['overall']:.3f} / 5", f"{csv['overall']/5*100:.1f}%")
 
-    # Clean up country name for filename
     safe_country_name = country.replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "")
     
-    st.download_button(
-        "Download metric results (CSV)",
-        pd.DataFrame(csv['rows']).to_csv(index=False).encode("utf-8"),
-        file_name=f"{safe_country_name}_metrics.csv",
-        mime="text/csv"
-    )
-    st.download_button(
-        "Download category results (CSV)",
-        pd.DataFrame(csv['category_rows']).to_csv(index=False).encode("utf-8"),
-        file_name=f"{safe_country_name}_categories.csv",
-        mime="text/csv"
-    )
+    col1, col2 = st.columns(2)
+    with col1:
+        st.download_button(
+            "Download Metric Results (CSV)",
+            pd.DataFrame(csv['rows']).to_csv(index=False).encode("utf-8"),
+            file_name=f"{safe_country_name}_metrics.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+    with col2:
+        st.download_button(
+            "Download Category Results (CSV)",
+            pd.DataFrame(csv['category_rows']).to_csv(index=False).encode("utf-8"),
+            file_name=f"{safe_country_name}_categories.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
