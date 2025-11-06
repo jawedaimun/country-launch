@@ -430,20 +430,12 @@ st.markdown("""
 
 st.markdown("""
 <style>
-/* Only affect result or output text area */
-div[data-testid="stMarkdownContainer"] p.result-text,
-div[data-testid="stMarkdownContainer"] span.result-text {
-    color: black !important;
-}
-
-/* General fallback for text below buttons */
-div[data-testid="stMarkdownContainer"]:has(p:only-child) {
+/* Only target dynamically generated Markdown sections that appear after buttons */
+div[data-testid="stMarkdownContainer"] {
     color: black !important;
 }
 </style>
 """, unsafe_allow_html=True)
-
-st.markdown(f'<p class="result-text">{generated_text}</p>', unsafe_allow_html=True)
 
 
 thresholds = load_thresholds()
