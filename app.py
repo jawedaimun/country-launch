@@ -430,9 +430,14 @@ st.markdown("""
 
 st.markdown("""
 <style>
-/* Only target dynamically generated Markdown sections that appear after buttons */
+/* Make all generated text (below buttons) black */
 div[data-testid="stMarkdownContainer"] {
     color: black !important;
+}
+
+/* Restore white text on buttons */
+div.stButton > button {
+    color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
