@@ -536,7 +536,7 @@ if compute_readiness:
         'overall': overall,
         'label': label,
         'color': color,
-        'narrative': narrative(country, cat_scores, overall)
+        'narrative': narrative(current_country, cat_scores, overall)
     }
 
 if 'launch_readiness' in st.session_state:
