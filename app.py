@@ -524,9 +524,9 @@ st.markdown("---")
 
 col1, col2, col3 = st.columns([1, 1, 2])
 with col1:
-    compute_readiness = st.button("📊 Compute Launch Readiness", use_container_width=True)
+    compute_readiness = st.button("Compute Launch Readiness", use_container_width=True)
 with col2:
-    compute_csv = st.button("📥 Generate CSV Reports", use_container_width=True)
+    compute_csv = st.button("Generate CSV Reports", use_container_width=True)
 
 if compute_readiness:
     overall = sum([cat_scores[c] * RUBRIC[c]["weight"] for c in RUBRIC.keys()])
@@ -622,7 +622,7 @@ if 'csv_results' in st.session_state:
     col1, col2 = st.columns(2)
     with col1:
         st.download_button(
-            "⬇️ Download Metric Results (CSV)",
+            "Download Metric Results (CSV)",
             pd.DataFrame(csv['rows']).to_csv(index=False).encode("utf-8"),
             file_name=f"{safe_country_name}_metrics.csv",
             mime="text/csv",
@@ -630,7 +630,7 @@ if 'csv_results' in st.session_state:
         )
     with col2:
         st.download_button(
-            "⬇️ Download Category Results (CSV)",
+            "Download Category Results (CSV)",
             pd.DataFrame(csv['category_rows']).to_csv(index=False).encode("utf-8"),
             file_name=f"{safe_country_name}_categories.csv",
             mime="text/csv",
