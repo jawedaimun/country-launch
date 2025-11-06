@@ -428,6 +428,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+/* Fix result text visibility */
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stMarkdownContainer"] span {
+    color: black !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 thresholds = load_thresholds()
 
 st.title("Country Launch Scoring")
