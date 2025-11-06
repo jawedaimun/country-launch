@@ -370,17 +370,27 @@ st.title("Country Launch Scoring")
 st.markdown("<p style='color: #6b7280; font-size: 1rem; margin-top: -0.5rem;'>Assess market readiness for Shariah/Ethical robo-advisory services</p>", unsafe_allow_html=True)
 st.markdown("")
 
+# Initialize session state for country if not exists
+if 'selected_country' not in st.session_state:
+    st.session_state.selected_country = "Singapore"
+
 # Country selection dropdown
 col1, col2 = st.columns([2, 3])
 with col1:
     country = st.selectbox(
         "Select Jurisdiction",
         options=list(COUNTRY_DATA.keys()),
-        index=0,
+        key='country_selector',
         help="Select a pre-populated country or choose 'Custom' to enter manually"
     )
 
-# Get pre-populated data - THIS WAS THE BUG!
+# Detect country change and update session state
+if country != st.session_state.selected_country:
+    st.session_state.selected_country = country
+    # Force rerun to update all widgets
+    st.rerun()
+
+# Get pre-populated data
 if country in COUNTRY_DATA:
     selected_data = COUNTRY_DATA[country]
 else:
@@ -419,13 +429,13 @@ for cat, cdef in RUBRIC.items():
                 default_val = options[2]
             default_idx = options.index(default_val)
             
-            val = st.selectbox(label, options, index=default_idx, key=f"sel_{cat}_{mkey}")
+            val = st.selectbox(label, options, index=default_idx, key=f"sel_{country}_{cat}_{mkey}")
             score, why = score_select(val, options, reverse)
             raw = val
         else:
             # Get pre-populated numeric value or default to 0
             default_num = selected_data.get(mkey, 0.0)
-            val = st.number_input(label, value=float(default_num), key=f"num_{cat}_{mkey}")
+            val = st.number_input(label, value=float(default_num), key=f"num_{country}_{cat}_{mkey}")
             score, why = score_numeric(val, mdef["breaks"], mdef["scores"], mdef["direction"])
             raw = val
             
@@ -487,12 +497,12 @@ if compute_csv:
             weight = mdef["weight"]
             
             if mdef.get("custom"):
-                val = st.session_state.get(f"sel_{cat_name}_{mkey}")
+                val = st.session_state.get(f"sel_{country}_{cat_name}_{mkey}")
                 options = mdef.get("options", DEFAULT_SELECT)
                 reverse = mdef.get("reverse_options", False)
                 score, rationale = score_select(val, options, reverse)
             else:
-                val = st.session_state.get(f"num_{cat_name}_{mkey}")
+                val = st.session_state.get(f"num_{country}_{cat_name}_{mkey}")
                 score, rationale = score_numeric(val, mdef["breaks"], mdef["scores"], mdef["direction"])
             
             rows.append({
