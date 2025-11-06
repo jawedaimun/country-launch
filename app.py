@@ -193,7 +193,7 @@ def readiness_label(score):
     elif score >= 3.0: return "Conditional (Needs fixes)", "#f59e0b"
     else: return "High risk (Major issues)", "#ef4444"
 
-def narrative(country, category_scores, overall):
+def narrative(st.session_state.selected_country, category_scores, overall):
     sorted_cats = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
     top3, bot3 = sorted_cats[:3], sorted_cats[-3:]
     label, _ = readiness_label(overall)
