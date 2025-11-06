@@ -9,7 +9,7 @@ with open("thresholds.json") as f:
     
 DEFAULT_SELECT = ["Very weak","Weak","Moderate","Strong","Excellent"]
 
-# Pre-populated country data extracted the CSVs
+# Pre-populated country data extracted from your CSVs
 COUNTRY_DATA = {
     "Singapore": {
         "GDP per capita": 72794.0,
@@ -211,7 +211,8 @@ st.markdown('''
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
     
     * {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-weight: 300 !important;
     }
     
     /* Main content area */
@@ -224,9 +225,9 @@ st.markdown('''
         background-color: #f8f9fa;
     }
     
-    /* Headings - ensure dark text on light background */
+    /* Headings - light weight, minimalist */
     h1 {
-        font-weight: 600;
+        font-weight: 300 !important;
         color: #1a1a1a !important;
         font-size: 2rem;
         margin-bottom: 0.5rem;
@@ -234,16 +235,16 @@ st.markdown('''
     }
     
     h2, h3 {
-        font-weight: 500;
+        font-weight: 300 !important;
         color: #1a1a1a !important;
         margin-top: 2rem;
         margin-bottom: 1rem;
         letter-spacing: -0.01em;
     }
     
-    /* Labels - dark gray for readability */
+    /* Labels - light weight */
     .stSelectbox label, .stNumberInput label {
-        font-weight: 500 !important;
+        font-weight: 400 !important;
         color: #1a1a1a !important;
         font-size: 0.9rem !important;
     }
@@ -259,11 +260,37 @@ st.markdown('''
         border-color: #9ca3af;
     }
     
+    /* Fix dropdown menu background and text */
+    div[role="listbox"] {
+        background-color: #ffffff !important;
+    }
+    
+    div[role="option"] {
+        background-color: #ffffff !important;
+        color: #1a1a1a !important;
+    }
+    
+    div[role="option"]:hover {
+        background-color: #f3f4f6 !important;
+        color: #1a1a1a !important;
+    }
+    
+    /* Selected option text in the dropdown */
+    div[data-baseweb="select"] span {
+        color: #1a1a1a !important;
+    }
+    
+    /* Dropdown arrow */
+    div[data-baseweb="select"] svg {
+        color: #6b7280 !important;
+    }
+    
     .stNumberInput input {
         border-radius: 8px;
         border: 1px solid #d1d5db;
         background-color: #ffffff !important;
         color: #1a1a1a !important;
+        font-weight: 300 !important;
     }
     
     .stNumberInput input:focus {
@@ -271,14 +298,14 @@ st.markdown('''
         box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
     
-    /* Buttons */
+    /* Buttons - keep medium weight for readability */
     .stButton > button {
         border-radius: 8px;
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         color: white !important;
         border: none;
         padding: 0.6rem 1.5rem;
-        font-weight: 500;
+        font-weight: 400 !important;
         font-size: 0.95rem;
         transition: all 0.2s;
     }
@@ -288,26 +315,33 @@ st.markdown('''
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     
-    /* Caption text - medium gray for subtle info */
+    /* Caption text - light weight for minimalism */
     .stMarkdown p, p[data-testid="stMarkdownContainer"] {
         color: #6b7280 !important;
         font-size: 0.875rem;
         line-height: 1.5;
+        font-weight: 300 !important;
     }
     
-    /* Bold text in markdown */
+    /* Bold text in markdown - medium weight */
     .stMarkdown strong {
         color: #1a1a1a !important;
+        font-weight: 500 !important;
     }
     
     /* Info boxes */
     .stAlert {
         border-radius: 8px;
+        font-weight: 300 !important;
     }
     
     /* Data tables */
     .stDataFrame {
         border-radius: 8px;
+    }
+    
+    .stDataFrame td, .stDataFrame th {
+        font-weight: 300 !important;
     }
     
     /* Divider */
@@ -324,7 +358,7 @@ st.markdown('''
         color: #1a1a1a !important;
         border: 1px solid #d1d5db;
         padding: 0.5rem 1.2rem;
-        font-weight: 500;
+        font-weight: 400 !important;
         font-size: 0.9rem;
     }
     
@@ -341,25 +375,29 @@ st.markdown('''
     
     [data-testid="stSidebar"] h2 {
         font-size: 1rem;
-        font-weight: 600;
+        font-weight: 400 !important;
         color: #1a1a1a !important;
     }
     
     [data-testid="stSidebar"] p {
         color: #4b5563 !important;
+        font-weight: 300 !important;
     }
     
     [data-testid="stSidebar"] .stMarkdown {
         color: #4b5563 !important;
+        font-weight: 300 !important;
     }
     
     /* Metric widget */
     [data-testid="stMetricValue"] {
         color: #1a1a1a !important;
+        font-weight: 300 !important;
     }
     
     [data-testid="stMetricLabel"] {
         color: #6b7280 !important;
+        font-weight: 300 !important;
     }
 </style>
 ''', unsafe_allow_html=True)
@@ -451,9 +489,9 @@ st.markdown("---")
 
 col1, col2, col3 = st.columns([1, 1, 2])
 with col1:
-    compute_readiness = st.button("Compute Launch Readiness", use_container_width=True)
+    compute_readiness = st.button("📊 Compute Launch Readiness", use_container_width=True)
 with col2:
-    compute_csv = st.button("Generate CSV Reports", use_container_width=True)
+    compute_csv = st.button("📥 Generate CSV Reports", use_container_width=True)
 
 if compute_readiness:
     overall = sum([cat_scores[c] * RUBRIC[c]["weight"] for c in RUBRIC.keys()])
@@ -549,7 +587,7 @@ if 'csv_results' in st.session_state:
     col1, col2 = st.columns(2)
     with col1:
         st.download_button(
-            "Download Metric Results (CSV)",
+            "⬇️ Download Metric Results (CSV)",
             pd.DataFrame(csv['rows']).to_csv(index=False).encode("utf-8"),
             file_name=f"{safe_country_name}_metrics.csv",
             mime="text/csv",
@@ -557,7 +595,7 @@ if 'csv_results' in st.session_state:
         )
     with col2:
         st.download_button(
-            "Download Category Results (CSV)",
+            "⬇️ Download Category Results (CSV)",
             pd.DataFrame(csv['category_rows']).to_csv(index=False).encode("utf-8"),
             file_name=f"{safe_country_name}_categories.csv",
             mime="text/csv",
