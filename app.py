@@ -443,22 +443,31 @@ col1, col2 = st.columns([2, 3])
 with col1:
     country = st.selectbox(
         "Select Jurisdiction",
-        options=list(COUNTRY_DATA.keys()),
+        options=list(COUNTRY_DATA.keys()) + ["Custom (Manual Entry)"],
         key='country_selector',
-        help="Select a pre-populated country or choose 'Custom' to enter manually"
+        help="Select a pre-populated country or choose 'Custom (Manual Entry)' to enter manually"
     )
 
-# Detect country change and update session state
-if country != st.session_state.selected_country:
+# If user chooses Custom, show text input box
+if country == "Custom (Manual Entry)":
+    manual_name = st.text_input("Enter Country Name Manually")
+    if manual_name.strip():
+        st.session_state.selected_country = manual_name.strip()
+    else:
+        st.session_state.selected_country = "Custom (Manual Entry)"
+else:
     st.session_state.selected_country = country
-    # Force rerun to update all widgets
-    st.rerun()
 
 # Get pre-populated data
-if country in COUNTRY_DATA:
-    selected_data = COUNTRY_DATA[country]
+if st.session_state.selected_country in COUNTRY_DATA:
+    selected_data = COUNTRY_DATA[st.session_state.selected_country]
 else:
     selected_data = {}
+
+# You can use this everywhere below
+current_country = st.session_state.selected_country
+st.write(f"Current country: {current_country}")
+
 
 st.sidebar.header("Category Weights")
 st.sidebar.markdown("*Total should equal 1.00*")
